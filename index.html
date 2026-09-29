@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2f0fa">
+<title>TacticLab · 青训战术室</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
+
+<div class="shell">
+  <!-- 侧抽屉 -->
+  <aside class="drawer" id="drawer">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true">
+          <defs>
+            <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#8f7bff"/><stop offset="1" stop-color="#5b3df5"/>
+            </linearGradient>
+          </defs>
+          <circle cx="24" cy="24" r="20" fill="none" stroke="url(#bm)" stroke-width="2.6"/>
+          <path d="M24 13l8.2 5.9-3.1 9.6h-10.2l-3.1-9.6z" fill="none" stroke="url(#bm)" stroke-width="2.4" stroke-linejoin="round"/>
+          <path d="M24 13v-6M32.2 18.9l5.9-1.9M29.1 28.5l3.6 8.4M18.9 28.5l-3.6 8.4M15.8 18.9l-5.9-1.9" stroke="url(#bm)" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-name">TacticLab</div>
+      <div class="brand-sub">青训战术室 · 五人制 / 八人制</div>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="nav-item is-active" data-view="home"><span class="nav-ic">⌂</span><span>总览</span></button>
+      <button class="nav-item" data-view="formations"><span class="nav-ic">▲</span><span>阵型库</span></button>
+      <button class="nav-item" data-view="studio"><span class="nav-ic">✦</span><span>战术生成</span></button>
+      <button class="nav-item" data-view="sessions"><span class="nav-ic">◔</span><span>训练课设计</span></button>
+      <button class="nav-item" data-view="saved"><span class="nav-ic">☆</span><span>我的收藏</span></button>
+      <button class="nav-item" data-view="about"><span class="nav-ic">§</span><span>方法与依据</span></button>
+    </nav>
+    <div class="drawer-foot">为教练员而作 · 内容依据英格兰 DNA 与西班牙青训体系</div>
+  </aside>
+  <div class="drawer-mask" id="drawerMask"></div>
+
+  <!-- 主内容 -->
+  <main class="main" id="main">
+    <header class="topbar">
+      <button class="icon-btn only-narrow" id="menuBtn" aria-label="菜单">☰</button>
+      <div class="topbar-title" id="topbarTitle">总览</div>
+      <div class="topbar-right" id="topbarRight"></div>
+    </header>
+    <section class="view" id="view"></section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-wrap" id="modalWrap" hidden><div class="modal glass" id="modalBox"></div></div>
+
+<script src="js/data.js"></script>
+<script src="js/pitch.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
