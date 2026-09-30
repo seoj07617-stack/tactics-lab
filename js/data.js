@@ -152,7 +152,7 @@ const FIELD8_FORMATIONS = [
     roles:[
       { num:"1", label:"门将", desc:"出球第一发起人，充当 +1 人数。" },
       { num:"2/3/4", label:"三中卫", desc:"居中者拖后，两侧拉开宽度，持球推进。" },
-      { num:"6/8/10", label:"三中场", desc:"6 号殿后保护，8 号盒-to-盒，10 号前插组织。" },
+      { num:"6/8/10", label:"三中场", desc:"6 号殿后保护，8 号上下往返接应两端，10 号前插组织。" },
       { num:"9", label:"单前锋", desc:"顶住中卫做支点，反跑身后。" },
     ],
     pros:["三角形传球网络遍布全场","三条线人数均衡，攻守转换顺","天然教会球员“线”的概念"],
@@ -654,7 +654,7 @@ const FIELD8_ATTACK = [
       {id:4,num:4,team:"own",x:20,y:76},{id:8,num:8,team:"own",x:44,y:24},{id:6,num:6,team:"own",x:40,y:50},
       {id:10,num:10,team:"own",x:44,y:76},{id:9,num:9,team:"own",x:66,y:50},
       {id:"b",team:"ball",x:17,y:50},
-      {id:"o1",num:5,team:"opp",x:48,y:20},{id:"o2",num:7,team:"opp",x:44,y:50},{id:"o3",num:11,team:"opp",x:48,y:72},
+      {id:"o1",num:5,team:"opp",x:48,y:20},{id:"o2",num:7,team:"opp",x:50,y:53},{id:"o3",num:11,team:"opp",x:52,y:80},
       {id:"og",num:1,team:"oppgk",x:93,y:50},
     ],
     steps:[
@@ -667,7 +667,7 @@ const FIELD8_ATTACK = [
       { note:"3 号下底到底线，观察包抄点后倒三角回传——传小禁区角，不传门前高空球。",
         moves:[{id:3,x:72,y:14,type:"carry"},{id:"b",x:72,y:14,type:"carry"},{id:9,x:66,y:44,type:"run"}] },
       { note:"6 号从中路后排插上到位，不停球直接推射。",
-        moves:[{id:"b",x:62,y:34,type:"pass"},{id:6,x:56,y:44,type:"run"},{id:"b",x:86,y:44,type:"shot"}] },
+        moves:[{id:"b",x:62,y:34,type:"pass"},{id:6,x:56,y:44,type:"run"},{id:"b",x:90,y:43,type:"shot"}] },
     ],
   },
   {

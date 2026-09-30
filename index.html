@@ -3,57 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f2f0fa">
+<meta name="theme-color" content="#f5f5f7">
 <title>TacticLab · 青训战术室</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="bg-blobs" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
 
-<div class="shell">
-  <!-- 侧抽屉 -->
-  <aside class="drawer" id="drawer">
-    <div class="brand">
-      <div class="brand-mark">
-        <svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true">
-          <defs>
-            <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#8f7bff"/><stop offset="1" stop-color="#5b3df5"/>
-            </linearGradient>
-          </defs>
-          <circle cx="24" cy="24" r="20" fill="none" stroke="url(#bm)" stroke-width="2.6"/>
-          <path d="M24 13l8.2 5.9-3.1 9.6h-10.2l-3.1-9.6z" fill="none" stroke="url(#bm)" stroke-width="2.4" stroke-linejoin="round"/>
-          <path d="M24 13v-6M32.2 18.9l5.9-1.9M29.1 28.5l3.6 8.4M18.9 28.5l-3.6 8.4M15.8 18.9l-5.9-1.9" stroke="url(#bm)" stroke-width="2.2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="brand-name">TacticLab</div>
-      <div class="brand-sub">青训战术室 · 五人制 / 八人制</div>
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9.2"/>
+      <path d="M12 6.2l4.6 3.3-1.8 5.4H9.2L7.4 9.5z"/>
+      <path d="M12 6.2V3.4M16.6 9.5l2.9-.9M14.8 14.9l2 2.9M9.2 14.9l-2 2.9M7.4 9.5l-2.9-.9"/>
+    </svg>
+    <div class="brand-text"><b>TacticLab</b><span>青训战术室</span></div>
+  </div>
+  <div class="top-actions">
+    <div class="seg seg-sm hidden" id="gtSeg">
+      <button data-gt="futsal">五人制</button>
+      <button data-gt="field8">八人制</button>
     </div>
-    <nav class="nav" id="nav">
-      <button class="nav-item is-active" data-view="home"><span class="nav-ic">⌂</span><span>总览</span></button>
-      <button class="nav-item" data-view="formations"><span class="nav-ic">▲</span><span>阵型库</span></button>
-      <button class="nav-item" data-view="studio"><span class="nav-ic">✦</span><span>战术生成</span></button>
-      <button class="nav-item" data-view="sessions"><span class="nav-ic">◔</span><span>训练课设计</span></button>
-      <button class="nav-item" data-view="saved"><span class="nav-ic">☆</span><span>我的收藏</span></button>
-      <button class="nav-item" data-view="about"><span class="nav-ic">§</span><span>方法与依据</span></button>
-    </nav>
-    <div class="drawer-foot">TacticLab v1.1 · 为教练员而作<br>依据英格兰 DNA 与西班牙青训</div>
-  </aside>
-  <div class="drawer-mask" id="drawerMask"></div>
+    <button class="tool-btn" id="savedBtn" title="我的收藏">
+      <span data-ic="saved"></span><i id="savedCount">0</i>
+    </button>
+  </div>
+</header>
 
-  <!-- 主内容 -->
-  <main class="main" id="main">
-    <header class="topbar">
-      <button class="icon-btn only-narrow" id="menuBtn" aria-label="菜单">☰</button>
-      <div class="topbar-title" id="topbarTitle">总览</div>
-      <div class="topbar-right" id="topbarRight"></div>
-    </header>
-    <section class="view" id="view"></section>
+<div class="workspace" id="workspace">
+  <nav class="rail" id="rail" aria-label="主导航">
+    <button class="rail-item is-active" data-view="tactics"><span class="rail-ic" data-ic="studio"></span><span>战术</span></button>
+    <button class="rail-item" data-view="formations"><span class="rail-ic" data-ic="formations"></span><span>阵型</span></button>
+    <button class="rail-item" data-view="sessions"><span class="rail-ic" data-ic="sessions"></span><span>训练课</span></button>
+    <button class="rail-item" data-view="saved"><span class="rail-ic" data-ic="saved"></span><span>收藏</span></button>
+    <button class="rail-item" data-view="about"><span class="rail-ic" data-ic="about"></span><span>依据</span></button>
+  </nav>
+
+  <main class="stage">
+    <section class="canvas" id="canvas" aria-live="polite"></section>
+    <aside class="panel" id="panel"></aside>
   </main>
 </div>
 
+<nav class="tabbar" id="tabbar" aria-label="主导航">
+  <button class="tab-item is-active" data-view="tactics"><span class="rail-ic" data-ic="studio"></span><span>战术</span></button>
+  <button class="tab-item" data-view="formations"><span class="rail-ic" data-ic="formations"></span><span>阵型</span></button>
+  <button class="tab-item" data-view="sessions"><span class="rail-ic" data-ic="sessions"></span><span>训练课</span></button>
+  <button class="tab-item" data-view="saved"><span class="rail-ic" data-ic="saved"></span><span>收藏</span></button>
+  <button class="tab-item" data-view="about"><span class="rail-ic" data-ic="about"></span><span>依据</span></button>
+</nav>
+
 <div class="toast" id="toast"></div>
-<div class="modal-wrap" id="modalWrap" hidden><div class="modal glass" id="modalBox"></div></div>
 
 <script src="js/data.js"></script>
 <script src="js/pitch.js"></script>
