@@ -441,23 +441,28 @@
     const ss = S.session;
     const themes = THEMES.filter(t => t.gameType === S.gameType);
     if (!themes.find(t => t.id === ss.theme)) ss.theme = "";
+    /* 主题按分类分组展示 */
+    const CAT_ORDER = ["进攻","配合","跑动","对抗","防守","转换","身体"];
+    const groups = CAT_ORDER.map(cat => ({ cat, items: themes.filter(t => (t.cat||"其他") === cat) })).filter(g => g.items.length);
+    const leftover = themes.filter(t => !CAT_ORDER.includes(t.cat||""));
+    if (leftover.length) groups.push({ cat:"其他", items:leftover });
     c.innerHTML = `
       <div class="controls">
         <select class="inp" id="ssTheme">
           <option value="">随机主题</option>
-          ${themes.map(t => `<option value="${t.id}" ${ss.theme===t.id?"selected":""}>${esc(t.title)}</option>`).join("")}
+          ${groups.map(g => `<optgroup label="${esc(g.cat)} · ${g.items.length} 个主题">${g.items.map(t => `<option value="${t.id}" ${ss.theme===t.id?"selected":""}>${esc(t.title)}</option>`).join("")}</optgroup>`).join("")}
         </select>
         <select class="inp" id="ssAge">${Object.entries(AGE_LABELS).map(([k,lab]) => `<option value="${k}" ${ss.age===k?"selected":""}>${lab}</option>`).join("")}</select>
         <select class="inp" id="ssDur">${[45,60,75,90].map(d => `<option value="${d}" ${ss.duration===d?"selected":""}>${d} 分钟</option>`).join("")}</select>
         <button class="btn btn-primary" id="btnGenS">生成教案</button>
       </div>
-      <div id="docHost"></div>
+      <div id="docHost"><div class="doc-empty">选择主题、年龄段和时长，点「生成教案」——五段结构的完整教案会显示在这里，可打印带走。</div></div>
       <div class="tipfoot"><b>今日提示</b>　${esc(TIPS[(Date.now()/86400000|0) % TIPS.length])}</div>`;
     $("#ssTheme").addEventListener("change", e => ss.theme = e.target.value);
     $("#ssAge").addEventListener("change", e => ss.age = e.target.value);
     $("#ssDur").addEventListener("change", e => ss.duration = +e.target.value);
     $("#btnGenS").addEventListener("click", () => {
-      const theme = ss.theme ? THEMES.find(t => t.id === ss.theme) : pick(themes);
+      const theme = ss.theme ? themes.find(t => t.id === ss.theme) : pick(themes);
       if (!theme) { toast("该赛制暂无主题"); return; }
       mountSession(buildSession(theme, ss.age, ss.duration));
     });
@@ -480,7 +485,7 @@
           <div class="blk" id="blk-${i}">
             <div class="blk-time">
               <div class="t">${b.dur}<span class="u"> min</span></div>
-              <span class="bar" style="background:${b.color}"></span>
+              <span class="bar" style="background:${b.color};width:${Math.max(10, Math.round(b.dur/total*64))}px"></span>
             </div>
             <div class="blk-body">
               <div class="blk-title"><span class="idx">${"①②③④⑤"[i]}</span>${esc(b.name)}${b.exName ? `<span style="font-weight:500;color:var(--ink3);font-size:13px">　${esc(b.exName)}</span>` : ""}</div>

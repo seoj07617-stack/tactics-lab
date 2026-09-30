@@ -1,4 +1,4 @@
-# TacticLab · 青训战术室
+# TacticLab
 
 面向教练员的五人制 / 八人制战术与训练课设计工具。
 线上地址：https://seoj07617-stack.github.io/tactics-lab/

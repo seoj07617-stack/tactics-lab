@@ -30,7 +30,7 @@ $types = @{
 }
 
 Write-Host ""
-Write-Host "  TacticLab · 青训战术室" -ForegroundColor Yellow
+Write-Host "  TacticLab" -ForegroundColor Yellow
 Write-Host "  ---------------------------------------" -ForegroundColor DarkGray
 Write-Host "  本机访问：  http://localhost:$port" -ForegroundColor Green
 if ($lanIp) { Write-Host ("  局域网访问（手机/平板连同一 WiFi）：") -ForegroundColor Green
@@ -95,4 +95,5 @@ while ($true) {
     $client.Close()
   } catch { Log ("EXC " + $_.Exception.Message); Start-Sleep -Milliseconds 30 }
 }
+
 
