@@ -442,7 +442,7 @@
     const themes = THEMES.filter(t => t.gameType === S.gameType);
     if (!themes.find(t => t.id === ss.theme)) ss.theme = "";
     /* 主题按分类分组展示 */
-    const CAT_ORDER = ["进攻","配合","跑动","对抗","防守","转换","身体"];
+    const CAT_ORDER = ["进攻","配合","跑动","对抗","防守","转换","身体","门将","定位"];
     const groups = CAT_ORDER.map(cat => ({ cat, items: themes.filter(t => (t.cat||"其他") === cat) })).filter(g => g.items.length);
     const leftover = themes.filter(t => !CAT_ORDER.includes(t.cat||""));
     if (leftover.length) groups.push({ cat:"其他", items:leftover });
@@ -476,7 +476,12 @@
     S.lastPlan = plan;
     const total = plan.blocks.reduce((a,b)=>a+b.dur,0);
     const INTENSITY = { "热身激活":"中", "技术练习":"低-中", "技能对抗":"高", "主题比赛":"高", "收束与提问":"低" };
-    const EQUIP = "标志碟 20+ · 足球（每人 1 颗 + 备用）· 标志服两色 · 小球门 2-4 · 大球门 2 · 绳梯/标志圈（身体主题）";
+    const EQUIP_BY_CAT = {
+      "门将":"守门员手套 · 标志碟 12+ · 小球门 2 · 标志服（含 1 件不同色门将服）· 足球 ≥ 8",
+      "身体":"绳梯 2 条（或地面贴纸代替）· 标志碟 16+ · 标志圈 4 · 足球每人 1",
+      "定位":"标志碟 20+ · 小球门 2-4 · 大球门 2 · 足球 ≥ 6（定位球专球）· 标志服两色",
+    };
+    const EQUIP = EQUIP_BY_CAT[plan.theme.cat] || "标志碟 20+ · 足球（每人 1 颗 + 备用）· 标志服两色 · 小球门 2-4 · 大球门 2";
     const host = $("#docHost");
     host.innerHTML = `
       <div class="doc">
