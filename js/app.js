@@ -426,11 +426,11 @@
   function buildSession(theme, age, duration) {
     const [w,t,k,s,c] = blockPlan(duration, age);
     return { theme, age, duration, blocks:[
-      { ...theme.warm,  name:"热身激活",  exName:theme.warm.name,  dur:w, color:"rgba(84,64,214,1)" },
-      { ...theme.tech,  name:"技术练习",  exName:theme.tech.name,  dur:t, color:"rgba(84,64,214,.72)" },
-      { ...theme.skill, name:"技能对抗",  exName:theme.skill.name, dur:k, color:"rgba(84,64,214,.5)" },
-      { ...theme.ssg,   name:"主题比赛",  exName:theme.ssg.name,   dur:s, color:"rgba(84,64,214,.32)" },
-      { name:"收束与提问", exName:"", dur:c, color:"rgba(84,64,214,.18)",
+      { ...theme.warm,  key:"warm",  name:"热身激活",  exName:theme.warm.name,  dur:w, color:"rgba(84,64,214,1)" },
+      { ...theme.tech,  key:"tech",  name:"技术练习",  exName:theme.tech.name,  dur:t, color:"rgba(84,64,214,.72)" },
+      { ...theme.skill, key:"skill", name:"技能对抗",  exName:theme.skill.name, dur:k, color:"rgba(84,64,214,.5)" },
+      { ...theme.ssg,   key:"ssg",   name:"主题比赛",  exName:theme.ssg.name,   dur:s, color:"rgba(84,64,214,.32)" },
+      { key:"close", name:"收束与提问", exName:"", dur:c, color:"rgba(84,64,214,.18)",
         org:"集合拉伸，围绕今天的主题回顾。",
         questions:theme.ask,
         points:["引导回答，不直接给答案","表扬今天具体做到的行为"] },
@@ -470,34 +470,79 @@
     else p.innerHTML = `<h2>训练课</h2><p class="lede">按英格兰四角模型组织：热身 → 技术 → 技能对抗 → 主题比赛 → 收束提问。选择条件生成后，这里会显示课程结构与快捷操作。</p>`;
   }
 
+  /* 从组织文字中提取人数形式（如 4v4） */
+  const ORG_RE = /(\d+v\d+|\d+\s*人一组|两人一组|每人一球|三人三角)/;
   function mountSession(plan) {
     S.lastPlan = plan;
     const total = plan.blocks.reduce((a,b)=>a+b.dur,0);
+    const INTENSITY = { "热身激活":"中", "技术练习":"低-中", "技能对抗":"高", "主题比赛":"高", "收束与提问":"低" };
+    const EQUIP = "标志碟 20+ · 足球（每人 1 颗 + 备用）· 标志服两色 · 小球门 2-4 · 大球门 2 · 绳梯/标志圈（身体主题）";
     const host = $("#docHost");
     host.innerHTML = `
       <div class="doc">
         <div class="doc-head">
           <h2>${esc(plan.theme.title)}</h2>
-          <div class="meta">${plan.theme.gameType==="futsal"?"五人制":"八人制"} · ${AGE_LABELS[plan.age]} · 共 ${total} 分钟</div>
+          <div class="meta">${plan.theme.gameType==="futsal"?"五人制":"八人制"} · ${AGE_LABELS[plan.age]} · 共 ${total} 分钟 · 强度：技术低-中 / 对抗高</div>
           <div class="focus">主题焦点：${esc(plan.theme.focus)}</div>
         </div>
-        ${plan.blocks.map((b,i) => `
+
+        <table class="ov-table">
+          <thead><tr><th>环节</th><th class="w-t">时间</th><th>内容</th><th>组织形式</th><th class="w-i">强度</th></tr></thead>
+          <tbody>
+            ${plan.blocks.map((b,i) => `
+              <tr>
+                <td>${"①②③④⑤"[i]} ${esc(b.name)}</td>
+                <td class="w-t">${b.dur}′</td>
+                <td>${esc(b.exName || b.org.split("。")[0].slice(0,18))}</td>
+                <td>${esc((b.org.match(ORG_RE) || ["按主题组织"])[0])}</td>
+                <td class="w-i">${INTENSITY[b.name]||"—"}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+
+        ${plan.blocks.map((b,i) => {
+          const meta = DRILL_META[`${plan.theme.id}.${b.key}`] || null;
+          return `
           <div class="blk" id="blk-${i}">
             <div class="blk-time">
               <div class="t">${b.dur}<span class="u"> min</span></div>
               <span class="bar" style="background:${b.color};width:${Math.max(10, Math.round(b.dur/total*64))}px"></span>
+              <span class="tag-i">${INTENSITY[b.name]||""}</span>
             </div>
             <div class="blk-body">
               <div class="blk-title"><span class="idx">${"①②③④⑤"[i]}</span>${esc(b.name)}${b.exName ? `<span style="font-weight:500;color:var(--ink3);font-size:13px">　${esc(b.exName)}</span>` : ""}</div>
-              <div class="blk-org">${esc(b.org || "")}</div>
+              <div class="blk-grid">
+                <div class="drill-box" data-dg="${meta ? esc(meta.dg) : ""}"></div>
+                <div class="blk-right">
+                  <div class="blk-org">${esc(b.org || "")}</div>
+                  ${meta ? `
+                  <div class="blk-sec"><div class="t">成功标准（当场检验）</div>
+                    <ul class="std-list">${meta.std.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+                  <div class="blk-sec"><div class="t">常见错误 → 纠正</div>
+                    <ul class="err-list">${meta.err.map(([e,fix])=>`<li><b>${esc(e)}</b><span> → ${esc(fix)}</span></li>`).join("")}</ul></div>` : ""}
+                </div>
+              </div>
               ${b.questions ? `<div class="blk-sec"><div class="t">主题提问</div><ul>${b.questions.map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div>` : ""}
               ${b.prog ? `<div class="blk-sec"><div class="t">进阶</div><ul><li>${esc(b.prog)}</li></ul></div>` : ""}
               ${b.reg ? `<div class="blk-sec"><div class="t">降阶</div><ul><li>${esc(b.reg)}</li></ul></div>` : ""}
               ${b.points ? `<div class="blk-sec"><div class="t">指导要点</div><ul>${b.points.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
             </div>
-          </div>`).join("")}
-        <div class="tipfoot"><b>依据</b>　${esc(refNames(plan.theme.refs))}</div>
+          </div>`;
+        }).join("")}
+
+        <table class="ov-table" style="margin-top:22px">
+          <thead><tr><th>器材清单</th><th>场地建议</th><th>人员配置</th></tr></thead>
+          <tbody><tr>
+            <td>${esc(EQUIP)}</td>
+            <td>${plan.theme.gameType==="futsal"?"室内/硬地半场（40×20m 或等比缩放）":"八人制半场（55×40m，可按人数缩放）"}</td>
+            <td>${AGE_LABELS[plan.age]} · 按主题 8-16 人均可组织，含门将位置轮换</td>
+          </tr></tbody>
+        </table>
+        <div class="tipfoot"><b>依据</b>　${esc(refNames(plan.theme.refs))}　·　教案图解格式参考 JFA / The FA practice pitch 结构</div>
       </div>`;
+
+    // 渲染布置图
+    $$(".drill-box", host).forEach(box => { if (box.dataset.dg) Drill.render(box, box.dataset.dg); });
 
     $("#panel").innerHTML = `
       <h2>课程结构<span class="en">${AGE_LABELS[plan.age]} · ${total} MIN</span></h2>
@@ -508,7 +553,7 @@
         <button class="btn btn-primary" id="ssSave">${ic("saved")} 收藏教案</button>
         <button class="btn btn-quiet" id="ssPrint">${ic("print")} 打印</button>
       </div>
-      <div class="footnote"><b>提示</b>　打印时可去掉右栏，得到一份干净的纸质教案。</div>`;
+      <div class="footnote"><b>提示</b>　打印即得一份带布置图与要求表的纸质教案，右栏不参与打印。</div>`;
     $$(".ol-row").forEach(b => b.addEventListener("click", () =>
       $("#canvas").querySelector(`#blk-${b.dataset.blk}`)?.scrollIntoView({ behavior:"smooth", block:"start" })));
     $("#ssSave").addEventListener("click", () => {

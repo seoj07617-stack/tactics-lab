@@ -162,6 +162,29 @@ button{font-family:inherit;color:inherit}
 .inp optgroup{font-weight:700;color:var(--ink2)}
 .inp optgroup option{font-weight:500;color:var(--ink)}
 .doc-empty{padding:64px 0;text-align:center;color:var(--ink3);font-size:13.5px;max-width:420px;margin:0 auto;line-height:1.8}
+
+/* 课程总览表 / 器材表 */
+.ov-table{width:100%;border-collapse:collapse;margin:18px 0 6px;font-size:12.5px}
+.ov-table th{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.06em;text-align:left;padding:6px 8px;border-bottom:2px solid var(--ink);white-space:nowrap}
+.ov-table td{padding:8px;border-bottom:1px solid var(--line2);color:var(--ink2);vertical-align:top}
+.ov-table tr:first-child td{color:var(--ink);font-weight:500}
+.ov-table .w-t{width:44px}
+.ov-table .w-i{width:52px}
+
+/* 布置图 + 块内双列 */
+.blk-grid{display:grid;grid-template-columns:minmax(200px,300px) 1fr;gap:16px;margin-top:10px;align-items:start}
+.drill-box{border:1px solid var(--line);border-radius:8px;background:#fff;padding:6px}
+.drill-svg{display:block;width:100%;height:auto}
+.blk-right{min-width:0}
+@media (max-width:700px){.blk-grid{grid-template-columns:1fr}}
+.tag-i{display:inline-block;margin-top:8px;font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-tint);border-radius:5px;padding:1px 7px}
+.std-list{list-style:none}
+.std-list li{font-size:13px;color:var(--ink);padding:3px 0 3px 18px;position:relative}
+.std-list li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:800;font-size:12px}
+.err-list{list-style:none}
+.err-list li{font-size:13px;padding:4px 0}
+.err-list li b{color:var(--red);font-weight:600}
+.err-list li span{color:var(--green)}
 .inp-mini{padding:5px 26px 5px 10px;font-size:12px}
 
 .btn{
@@ -376,7 +399,9 @@ button{font-family:inherit;color:inherit}
   .canvas{overflow:visible;padding:0}
   .surface{border:none;padding:0}
   .doc{max-width:none}
-  .blk{break-inside:avoid}
+  .blk,.blk-grid{break-inside:avoid}
+  .ov-table th{border-bottom-color:#000}
+  .drill-box{border-color:#ccc}
 }
 
 /* ---------- 窄屏 ---------- */
