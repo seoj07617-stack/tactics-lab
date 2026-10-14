@@ -31,6 +31,7 @@
   const ICONS = {
     formations: '<svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="4.3" r="2" fill="currentColor"/><circle cx="4.2" cy="13.2" r="2" fill="currentColor"/><circle cx="13.8" cy="13.2" r="2" fill="currentColor"/><path d="M9 6.6 5.3 11.3M9 6.6l3.7 4.7M6.4 13.2h5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
     studio: '<svg viewBox="0 0 18 18" fill="currentColor"><path d="M9 2.2c.55 3.2 1.6 4.25 4.8 4.8-3.2.55-4.25 1.6-4.8 4.8-.55-3.2-1.6-4.25-4.8-4.8 3.2-.55 4.25-1.6 4.8-4.8Z"/><path d="M14.2 10.6c.3 1.75.9 2.35 2.6 2.65-1.7.3-2.3.9-2.6 2.65-.3-1.75-.9-2.35-2.6-2.65 1.7-.3 2.3-.9 2.6-2.65Z" opacity=".55"/></svg>',
+    board: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="13" height="11" rx="1.6"/><path d="M5.5 11.5 8 8.2l2 2 2.5-3.4"/><circle cx="13.6" cy="5.4" r="1.1" fill="currentColor" stroke="none"/></svg>',
     sessions: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="9" cy="9" r="6.4"/><path d="M9 5.6V9l2.5 1.6"/></svg>',
     saved: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M9 2.6l2 4.1 4.5.65-3.25 3.17.77 4.48L9 12.9l-4.02 2.1.77-4.48L2.5 7.35 7 6.7 9 2.6Z"/></svg>',
     about: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="2.5" width="11" height="13" rx="2"/><path d="M6.8 2.5v13"/></svg>',
@@ -83,12 +84,13 @@
   }
 
   /* ---------- 路由与渲染 ---------- */
-  const VIEW_TITLES = { tactics:"战术", formations:"阵型", sessions:"训练课", saved:"收藏", about:"依据" };
+  const VIEW_TITLES = { tactics:"战术", board:"战术板", formations:"阵型", sessions:"训练课", saved:"收藏", about:"依据" };
 
-  function go(view) { S.view = view; render(); }
+  function go(view) { S.view = view; document.body.dataset.view = view; render(); }
 
   function render() {
     $$(".rail-item, .tab-item").forEach(b => b.classList.toggle("is-active", b.dataset.view === S.view));
+    document.body.dataset.view = S.view;
     const gtVisible = S.view === "formations" || S.view === "tactics" || S.view === "sessions";
     $("#gtSeg").classList.toggle("hidden", !gtVisible);
     $$("#gtSeg button").forEach(b => b.classList.toggle("is-active", b.dataset.gt === S.gameType));
@@ -101,6 +103,7 @@
     c.scrollTop = 0; p.scrollTop = 0;
 
     if (S.view === "tactics")    return renderTactics(c, p);
+    if (S.view === "board")      return Board.init(c, p);
     if (S.view === "formations") return renderFormations(c, p);
     if (S.view === "sessions")   return renderSessions(c, p);
     if (S.view === "saved")      return renderSaved(c);
