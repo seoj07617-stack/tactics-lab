@@ -74,7 +74,7 @@ const Board = (() => {
       } else if (p.team === "B") {
         el("path", { d:`M -1 -1 L 1 1 M -1 1 L 1 -1`, stroke:"#fff", "stroke-width":.6, "stroke-linecap":"round" }, g);
       }
-      if (p.name) { const n = el("text", { y:-4.2, "text-anchor":"middle", "font-size":2.6, "font-weight":600, fill:C.ink, stroke:"#fff", "stroke-width":.6, "paint-order":"stroke" }, g); n.textContent = p.name; }
+      if (p.name && p.name !== String(p.num ?? "")) { const n = el("text", { y:-4.2, "text-anchor":"middle", "font-size":2.6, "font-weight":600, fill:C.ink, stroke:"#fff", "stroke-width":.6, "paint-order":"stroke" }, g); n.textContent = p.name; }
     } else if (p.kind === "ball") {
       el("circle", { r:1.7, fill:C.ball, stroke:"#fff", "stroke-width":.45 }, g);
     } else if (p.kind === "cone") {
@@ -271,7 +271,7 @@ const Board = (() => {
   /* ---------- 编辑面板动作 ---------- */
   function editSelected() {
     if (!selected || selected.kind !== "player") { toastMsg("先选择一名球员（选择工具点击）"); return; }
-    const name = prompt("球员名字（留空清除；对方球员可留空显示 ×）：", selected.name || "");
+    const name = prompt("球员名字标签（显示在球员上方，如「队长」；与号码相同则不显示；留空清除）：", selected.name || "");
     if (name === null) return;
     let num = prompt("号码（对方球员留空则显示 ×）：", selected.num ?? "");
     if (num !== null && num !== "" && !isNaN(+num)) {
@@ -291,9 +291,11 @@ const Board = (() => {
     S.pieces = S.pieces.filter(p => p.kind !== "player" || p.team !== "A");
     const half = S.pitch === "half";
     f.players.forEach(pl => {
+      /* 纯数字的位置标签（6/8/10…）与号码重复，不入名字；GK 等文字标签保留 */
+      const cleanLabel = (pl.label && !/^\d+$/.test(pl.label)) ? pl.label : "";
       S.pieces.push({ id:"p" + (S.seq++), kind:"player", team:"A",
         x: half ? 62 + pl.x*0.46 : pl.x, y: half ? 4 + pl.y*0.49 : pl.y,
-        num: pl.num, name: pl.label || "" });
+        num: pl.num, name: cleanLabel });
     });
     render(); toastMsg("已填入 " + f.name + "（己方）");
   }
