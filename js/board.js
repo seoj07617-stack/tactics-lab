@@ -68,9 +68,13 @@ const Board = (() => {
       const col = p.team === "A" ? C.A : p.team === "B" ? C.B : C.Agk;
       if (p === selected) el("circle", { r:4.4, fill:"none", stroke:col, "stroke-width":.6, opacity:.85 }, g);
       el("circle", { r:2.8, fill:col, stroke:"#fff", "stroke-width":.55 }, g);
-      const t = el("text", { y:1, "text-anchor":"middle", "dominant-baseline":"middle", "font-size":2.9, "font-weight":700, fill:"#fff", stroke:"rgba(0,0,0,.25)", "stroke-width":.6, "paint-order":"stroke" }, g);
-      t.textContent = String(p.num ?? "");
-      if (p.name) { const n = el("text", { y:-4.2, "text-anchor":"middle", "font-size":2.6, "font-weight":600, fill:C.ink }, g); n.textContent = p.name; }
+      if (p.num != null) {
+        const t = el("text", { y:1, "text-anchor":"middle", "dominant-baseline":"middle", "font-size":2.9, "font-weight":700, fill:"#fff", stroke:"rgba(0,0,0,.25)", "stroke-width":.6, "paint-order":"stroke" }, g);
+        t.textContent = String(p.num);
+      } else if (p.team === "B") {
+        el("path", { d:`M -1 -1 L 1 1 M -1 1 L 1 -1`, stroke:"#fff", "stroke-width":.6, "stroke-linecap":"round" }, g);
+      }
+      if (p.name) { const n = el("text", { y:-4.2, "text-anchor":"middle", "font-size":2.6, "font-weight":600, fill:C.ink, stroke:"#fff", "stroke-width":.6, "paint-order":"stroke" }, g); n.textContent = p.name; }
     } else if (p.kind === "ball") {
       el("circle", { r:1.7, fill:C.ball, stroke:"#fff", "stroke-width":.45 }, g);
     } else if (p.kind === "cone") {
@@ -170,7 +174,8 @@ const Board = (() => {
     if (["pa","pb","ball","cone","vest","ring"].includes(tool)) {
       snap();
       const kinds = { pa:"player", pb:"player", ball:"ball", cone:"cone", vest:"vest", ring:"ring" };
-      const p = { id:"p" + (S.seq++), kind:kinds[tool], team: tool==="pa" ? "A" : tool==="pb" ? "B" : "", x:pt.x, y:pt.y };
+      const spot = findFreeSpot(pt);
+      const p = { id:"p" + (S.seq++), kind:kinds[tool], team: tool==="pa" ? "A" : tool==="pb" ? "B" : "", x:spot.x, y:spot.y };
       if (p.kind === "player") p.num = nextNum(p.team);
       S.pieces.push(p);
       selected = p; render(); return;
@@ -243,20 +248,39 @@ const Board = (() => {
   }
 
   function nextNum(team) {
+    /* 对方球员默认不带数字（灰色 × 标识），需要时用「名」按钮自定义 */
+    if (team === "B") return null;
     const used = S.pieces.filter(p => p.team === team).map(p => p.num);
     for (let i = 1; i <= 99; i++) if (!used.includes(i)) return i;
-    return 1;
+    return null;
+  }
+  /* 新元素落位避让：位置被占时向右下找最近空位，避免叠堆 */
+  function findFreeSpot(pt) {
+    const occupied = S.pieces.map(p => ({ x:p.x, y:p.y }));
+    let { x, y } = pt;
+    const vb = VB();
+    for (let tryn = 0; tryn < 60; tryn++) {
+      if (!occupied.some(o => Math.hypot(o.x-x, o.y-y) < 4)) return { x, y };
+      x += 3.2;
+      if (x > vb.w - 4) { x = 4; y += 4; }
+      if (y > vb.h - 4) { y = 4; }
+    }
+    return { x:pt.x, y:pt.y };
   }
 
   /* ---------- 编辑面板动作 ---------- */
   function editSelected() {
     if (!selected || selected.kind !== "player") { toastMsg("先选择一名球员（选择工具点击）"); return; }
-    const name = prompt("球员名字（留空清除）：", selected.name || "");
+    const name = prompt("球员名字（留空清除；对方球员可留空显示 ×）：", selected.name || "");
     if (name === null) return;
-    const num = prompt("号码：", selected.num ?? "");
+    let num = prompt("号码（对方球员留空则显示 ×）：", selected.num ?? "");
+    if (num !== null && num !== "" && !isNaN(+num)) {
+      const clash = S.pieces.find(p => p !== selected && p.team === selected.team && p.num === +num);
+      if (clash) { if (!confirm(`本队已有 ${num} 号，仍要使用吗？`)) num = null; }
+    }
     snap();
     selected.name = name.trim() || "";
-    if (num !== null && num !== "" && !isNaN(+num)) selected.num = +num;
+    selected.num = (num !== null && num !== "" && !isNaN(+num)) ? +num : null;
     render();
   }
 
